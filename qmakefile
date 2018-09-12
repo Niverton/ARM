@@ -1,0 +1,5 @@
+HEADERS = 
+SOURCES = src/main.cpp
+CONFIG += qt debug warn_on
+DESTDIR = build
+TARGET = arm
