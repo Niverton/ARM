@@ -5,3 +5,4 @@ CONFIG += qt debug warn_on
 QT = opengl
 DESTDIR = build
 TARGET = arm
+INCLUDEPATH += $$PWD/include

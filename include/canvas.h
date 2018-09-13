@@ -1,14 +1,15 @@
 #ifndef CANVAS_H
 #define CANVAS_H
 
+#define GL_GLEXT_PROTOTYPES
 #include <QtOpenGL>
 #include <QGLWidget>
-#include <stdlib>
+#include <cstdlib>
 
 template <typename T>
 struct Vec3 {
 	T x, y, z;
-}
+};
 
 class Canvas : public QGLWidget
 {
@@ -25,8 +26,8 @@ public slots:
 
 private:
     unsigned int vertexBuffer, faceBuffer;
-	std::vector<Vec3<unsigned int>> vertexArray;
-	std::vector<Vec3<short>> faceArray;
+	std::vector<Vec3<int>> vertexArray;
+	std::vector<Vec3<unsigned short>> faceArray;
 };
 
 
