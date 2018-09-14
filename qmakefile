@@ -1,8 +1,8 @@
 HEADERS = include/canvas.h
 SOURCES = src/main.cpp \
 	  src/canvas.cpp
-CONFIG += qt debug warn_on
-QT = opengl
+CONFIG += qt debug warn_on c++14
+QT += opengl
 DESTDIR = build
 TARGET = arm
 INCLUDEPATH += $$PWD/include
