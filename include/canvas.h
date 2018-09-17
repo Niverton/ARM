@@ -26,8 +26,9 @@ public slots:
 
 private:
     unsigned int vertexBuffer, faceBuffer;
-	std::vector<Vec3<int>> vertexArray;
+	std::vector<Vec3<float>> vertexArray;
 	std::vector<Vec3<unsigned short>> faceArray;
+    unsigned int program;
 };
 
 
