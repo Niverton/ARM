@@ -1,5 +1,7 @@
-HEADERS = include/canvas.h
+HEADERS = include/canvas.h \
+		include/program.h 
 SOURCES = src/main.cpp \
+		src/program.cpp \
 	  src/canvas.cpp
 CONFIG += qt debug warn_on c++14
 QT += opengl

@@ -4,8 +4,6 @@
 #include "canvas.h"
 
 int main(int argc, char* argv[]){
-	std::cout << "arm" << std::endl;
-
 	QApplication app(argc, argv);
     QWidget window;
     window.resize(320, 240);
