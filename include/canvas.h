@@ -5,6 +5,10 @@
 #include <QtOpenGL>
 #include <QGLWidget>
 #include <cstdlib>
+#include <QGLShaderProgram>
+#include <QGLShader>
+#include <QMatrix4x4>
+#include <memory>
 
 #include "program.h"
 
@@ -28,8 +32,9 @@ private:
     unsigned int vertexBuffer, faceBuffer;
 	std::vector<Vec3<float>> vertexArray;
 	std::vector<Vec3<unsigned short>> faceArray;
-    Program *pProgram;
+    std::unique_ptr<QGLShaderProgram> program;
+    std::unique_ptr<QGLShader> vertexShader, fragmentShader;
+    QMatrix4x4 mView, mProj, mObj;
 };
-
 
 #endif

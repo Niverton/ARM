@@ -1,12 +1,9 @@
 HEADERS = include/canvas.h	\
 	  include/voxel_mesh.h	\
-	  include/program.h 
 SOURCES = src/main.cpp		\
 	  src/canvas.cpp	\
-	  src/program.cpp	\
 	  src/voxel_mesh.cpp
 CONFIG += qt debug warn_on c++14
 QT += opengl
-DESTDIR = build
 TARGET = arm
 INCLUDEPATH += $$PWD/include
