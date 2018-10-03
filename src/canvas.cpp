@@ -1,5 +1,6 @@
 #include "canvas.h"
 #include <iostream> // A ENLEVER !
+#include "voxel_mesh.h"
 
 Canvas::Canvas(QWidget *parent) : QGLWidget(parent) { 
   setWindowTitle("arm");
@@ -89,7 +90,10 @@ void Canvas::paintGL() {
   program->setUniformValue("objectMatrix", mObj);
   program->setUniformValue("projectionMatrix", mProj);
 
-  glDrawElements(GL_TRIANGLES, faceArray.size()*3, GL_UNSIGNED_SHORT, 0);
+  //glDrawElements(GL_TRIANGLES, faceArray.size()*3, GL_UNSIGNED_SHORT, 0);
+  // TODO : Declare the VoxelMesh BEFORE calling this function(paintGL())
+  VoxelMesh vmesh;
+  vmesh.drawAsCubes(*this);
 
   glDisableVertexAttribArray(0);
 }

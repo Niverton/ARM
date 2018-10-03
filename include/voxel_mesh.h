@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "canvas.h"
+
 class VoxelMesh {
 public:
   using Value = unsigned short;
@@ -12,9 +14,11 @@ public:
   virtual ~VoxelMesh() = default;
 
   void loadFromPGM3D(const std::string &file_name);
+  void drawAsCubes(Canvas &canvas);
 
 protected:
-  unsigned int column{0}, line{0}, depth{0};
+  unsigned int column{1}, line{1}, depth{1};
+  float offset[3]{1.0f, 1.0f, 1.0f};
   Value max_value;
   std::vector<Value> voxel_array;
 };
