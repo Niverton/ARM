@@ -1,5 +1,5 @@
 HEADERS = include/canvas.h	\
-	  include/voxel_mesh.h	\
+	  include/voxel_mesh.h
 SOURCES = src/main.cpp		\
 	  src/canvas.cpp	\
 	  src/voxel_mesh.cpp
