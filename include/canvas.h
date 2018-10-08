@@ -30,7 +30,9 @@ public:
 
 private:
     void initializeProgram();
-    unsigned int vertexBuffer, faceBuffer;
+    void initializeGeometry();
+    unsigned int vertexBuffer, faceBuffer, instanceBuffer;
+    //std::vector<QVector2> positionArray;
     std::unique_ptr<QGLShader> vertexShader, fragmentShader;
     QMatrix4x4 mView, mProj, mObj;
 };
