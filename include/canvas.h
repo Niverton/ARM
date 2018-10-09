@@ -32,7 +32,7 @@ private:
     void initializeProgram();
     void initializeGeometry();
     unsigned int vertexBuffer, faceBuffer, instanceBuffer;
-    //std::vector<QVector2> positionArray;
+    std::vector<Vec3<float>> positionArray;
     std::unique_ptr<QGLShader> vertexShader, fragmentShader;
     QMatrix4x4 mView, mProj, mObj;
 };
