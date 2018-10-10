@@ -63,7 +63,7 @@ void Canvas::initializeGL() {
   makeCurrent();
   initializeProgram();
   initializeGeometry();
-  glClearColor(0.5,0.5,0.5,1.0);
+  glClearColor(0.0,0.0,0.0,1.0);
 
   glEnable(GL_DEPTH_TEST);
 
@@ -114,6 +114,7 @@ void Canvas::paintGL() {
   program->setUniformValue("viewMatrix", mView);
   program->setUniformValue("objectMatrix", mObj);
   program->setUniformValue("projectionMatrix", mProj);
+  //program->setUniformValue("projectionMatrix", mProj);
 
   // glDrawElements(GL_TRIANGLES, faceArray.size()*3, GL_UNSIGNED_SHORT, 0);
   glDrawElementsInstanced(GL_TRIANGLES, faceArray.size() * 3, GL_UNSIGNED_SHORT,

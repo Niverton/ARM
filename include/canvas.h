@@ -12,15 +12,10 @@
 #include <cstdlib>
 #include <memory>
 
-template <typename T>
-struct Vec3 {
-  T x, y, z;
-};
-
 class Canvas : public QGLWidget {
   Q_OBJECT
 public:
-  explicit Canvas(const QGLFormat &gl_format, QWidget *parent = 0);
+  explicit Canvas(const QGLFormat &gl_format, QWidget *parent =);
   void initializeGL();
   void resizeGL(int width, int height);
   void paintGL();
