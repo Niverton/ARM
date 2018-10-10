@@ -7,22 +7,14 @@
 
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
-  QWidget window;
-  window.resize(320, 240);
-  window.show();
-  window.setWindowTitle(
-      QApplication::translate("toplevel", "Top-level widget"));
-
+  
   QGLFormat format{};
-  format.setVersion(3, 3);
+  format.setVersion(3, 1); //see https://stackoverflow.com/a/31506261
   format.setProfile(QGLFormat::CoreProfile);
-  Canvas *pCanvas = new Canvas(format, &window);
-
-  // Taille fixé en dur, à modifier si on a le temps
-  pCanvas->resize(640, 480);
-  window.resize(640, 480);
-
+  Canvas *pCanvas = new Canvas(format);
   pCanvas->show();
+
+  pCanvas->resize(640, 480);
 
   return app.exec();
 }
