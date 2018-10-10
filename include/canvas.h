@@ -33,6 +33,7 @@ private:
   std::vector<float> intensityArray;
   std::unique_ptr<QGLShader> vertexShader, fragmentShader;
   QMatrix4x4 mView, mProj, mObj;
+  VoxelMesh voxelMesh;
 };
 
 #endif
