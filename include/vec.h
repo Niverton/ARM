@@ -1,5 +1,5 @@
-#ifndef CANVAS_H
-#define CANVAS_H
+#ifndef VEC_H
+#define VEC_H
 
 template <typename T>
 struct Vec3_base {

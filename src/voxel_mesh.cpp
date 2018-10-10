@@ -19,15 +19,22 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
   f >> max_value;
 
   unsigned int size = column * line * depth;
-  voxel_array.reserve(size);
-  for (uint i = 0; i < size; ++i) {
-    Value v;
-    f >> v;
-    if (f.fail()) {
-      std::cerr << "Error reading file (" << file_name << ")\n";
-      std::exit(1);
+  intensity_array.reserve(size);
+  for (uint i = 0; i < depth; ++i) {
+    for (uint j = 0; j < line; ++j) {
+      for (uint k = 0; k < column; ++k) {
+        Value v;
+        f >> v;
+        if (f.fail()) {
+          std::cerr << "Error reading file (" << file_name << ")\n";
+          std::exit(1);
+        }
+        if (v != 0) {
+          intensity_array.emplace_back((float)v / (float)max_value);
+          position_array.emplace_back(Vec3{k, j, i});
+        }
+      }
     }
-    voxel_array.emplace_back(v);
   }
 
   // offset = {1.0f, 1.0f, 1.0f};

@@ -1,6 +1,7 @@
 #ifndef VOXEL_MESH_H
 #define VOXEL_MESH_H
 
+#include "vec.h"
 #include <string>
 #include <vector>
 
@@ -18,7 +19,8 @@ protected:
   unsigned int column{1}, line{1}, depth{1};
   float offset[3]{1.0f, 1.0f, 1.0f};
   Value max_value;
-  std::vector<Value> voxel_array;
+  std::vector<float> intensity_array;
+  std::vector<Vec3> position_array;
 };
 
 #endif /* VOXEL_MESH_H */
