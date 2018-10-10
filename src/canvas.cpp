@@ -55,14 +55,6 @@ void Canvas::initializeGeometry() {
   faceArray.push_back({0, 1, 4});
   faceArray.push_back({1, 4, 5});
 
-  /*positionArray.push_back({0.2, 0.2, 0.2});
-  positionArray.push_back({0.4, 0.4, 0.4});
-  positionArray.push_back({0.5, 0.5, 0.5});
-
-  intensityArray.push_back(0.2);
-  intensityArray.push_back(0.5);
-  intensityArray.push_back(0.8);*/
-
   voxelMesh.loadFromPGM3D("../data/shepp_logan.pgm3d");
   positionArray = voxelMesh.position_array;
   intensityArray = voxelMesh.intensity_array;
@@ -111,7 +103,7 @@ void Canvas::initializeGL() {
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  mView.lookAt({2, 1, -1}, {0, 0, 0}, {0, 1, 0});
+  mView.lookAt({0, 0, -1}, {0, 0, 0}, {0, 1, 0});
   mObj.setToIdentity();
   mProj.perspective(90.0, 4.0 / 3.0, 0.1, 100.0);
 }

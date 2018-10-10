@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
   
   QGLFormat format{};
-  format.setVersion(3, 1); //see https://stackoverflow.com/a/31506261
+  format.setVersion(3, 1);
   format.setProfile(QGLFormat::CoreProfile);
   Canvas *pCanvas = new Canvas(format);
   pCanvas->show();
