@@ -30,9 +30,10 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
     voxel_array.emplace_back(v);
   }
 
-  //offset = {1.0f, 1.0f, 1.0f};
+  // offset = {1.0f, 1.0f, 1.0f};
 }
 
+/*
 void VoxelMesh::drawAsCubes(Canvas &canvas) {
   // TODO : Get the Canvas from a cleaner way
   canvas.program->setUniformValue("column", column);
@@ -42,7 +43,11 @@ void VoxelMesh::drawAsCubes(Canvas &canvas) {
   canvas.program->setUniformValue("offset", offset[0], offset[1], offset[2]);
 
 
-  // https://stackoverflow.com/questions/27763851/how-to-use-gldrawelementsinstanced-texture-buffer-objects
-  // In shader : gl_InstanceID pour l'instance (glGenVertexArray & BindVertexArray ? Avec gl_VertexID ?)
-  glDrawElementsInstanced(GL_TRIANGLES, canvas.faceArray.size() * 3, GL_UNSIGNED_SHORT, nullptr, column * line * depth);//voxel_array.size();
+  //
+https://stackoverflow.com/questions/27763851/how-to-use-gldrawelementsinstanced-texture-buffer-objects
+  // In shader : gl_InstanceID pour l'instance (glGenVertexArray &
+BindVertexArray ? Avec gl_VertexID ?) glDrawElementsInstanced(GL_TRIANGLES,
+canvas.faceArray.size() * 3, GL_UNSIGNED_SHORT, nullptr, column * line *
+depth);//voxel_array.size();
 }
+*/

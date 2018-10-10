@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include "canvas.h"
-
 class VoxelMesh {
 public:
   using Value = unsigned short;
@@ -14,7 +12,7 @@ public:
   virtual ~VoxelMesh() = default;
 
   void loadFromPGM3D(const std::string &file_name);
-  void drawAsCubes(Canvas &canvas);
+  // void drawAsCubes(Canvas &canvas);
 
 protected:
   unsigned int column{1}, line{1}, depth{1};
