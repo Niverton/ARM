@@ -64,8 +64,8 @@ void Canvas::initializeGeometry() {
   intensityArray.push_back(0.8);*/
 
   voxelMesh.loadFromPGM3D("../data/shepp_logan.pgm3d");
-  positionArray = std::move(voxelMesh.position_array);
-  intensityArray = std::move(voxelMesh.intensity_array);
+  positionArray = voxelMesh.position_array;
+  intensityArray = voxelMesh.intensity_array;
 }
 
 void Canvas::initializeGL() {
@@ -111,7 +111,7 @@ void Canvas::initializeGL() {
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  mView.lookAt({2, 1, -20}, {0, 0, 0}, {0, 1, 0});
+  mView.lookAt({2, 1, -1}, {0, 0, 0}, {0, 1, 0});
   mObj.setToIdentity();
   mProj.perspective(90.0, 4.0 / 3.0, 0.1, 100.0);
 }
@@ -136,8 +136,8 @@ void Canvas::paintGL() {
   program->setUniformValue("viewMatrix", mView);
   program->setUniformValue("objectMatrix", mObj);
   program->setUniformValue("projectionMatrix", mProj);
-  //program->setUniformValue("meshBounds", Vec3(1.0,1.0,1.0));
-  int nb_instance = 3;
+  program->setUniformValue("meshBounds", (float)voxelMesh.column, (float)voxelMesh.line, (float)voxelMesh.depth );
+  int nb_instance = positionArray.size()/3;
 
   // glDrawElements(GL_TRIANGLES, faceArray.size()*3, GL_UNSIGNED_SHORT, 0);
   glDrawElementsInstanced(GL_TRIANGLES, faceArray.size() * 3, GL_UNSIGNED_SHORT,
