@@ -129,16 +129,28 @@ void Canvas::paintGL() {
   program->setUniformValue("objectMatrix", mObj);
   program->setUniformValue("projectionMatrix", mProj);
   program->setUniformValue("meshBounds", (float)voxelMesh.column, (float)voxelMesh.line, (float)voxelMesh.depth );
-  int nb_instance = positionArray.size()/3;
+  int nb_instance = positionArray.size();
 
-  // glDrawElements(GL_TRIANGLES, faceArray.size()*3, GL_UNSIGNED_SHORT, 0);
   glDrawElementsInstanced(GL_TRIANGLES, faceArray.size() * 3, GL_UNSIGNED_SHORT,
                           nullptr, nb_instance);
-  // TODO : Declare the VoxelMesh BEFORE calling this function(paintGL())
-  /*VoxelMesh vmesh;
-  vmesh.drawAsCubes(*this);*/
 
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(2);
+
+  update();
+}
+
+void Canvas::mouseMoveEvent(QMouseEvent *event){
+  QPoint dpos = event->pos() - mouse_prev_pos;
+
+  if(event->buttons() & Qt::LeftButton){
+    float angleX = (float)dpos.x();
+    mObj.rotate(angleX, QVector3D(0.0,1.0,0.0));
+    float angleY = (float)dpos.y();
+    mObj.rotate(angleY, QVector3D(1.0,0.0,0.0));
+  }
+
+
+  mouse_prev_pos = event->pos();
 }
