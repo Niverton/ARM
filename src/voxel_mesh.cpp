@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <cmath>
 
 void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
   std::fstream f{file_name, std::ios::in};
@@ -43,7 +44,62 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
     }
   }
 
-  // offset = {1.0f, 1.0f, 1.0f};
+  /*std::vector<Vec3> neighbors;
+  neighbors.emplace_back(Vec3{-1, 0, 0});
+  neighbors.emplace_back(Vec3{ 1, 0, 0});
+  neighbors.emplace_back(Vec3{ 0,-1, 0});
+  neighbors.emplace_back(Vec3{ 0, 1, 0});
+  neighbors.emplace_back(Vec3{ 0, 0,-1});
+  neighbors.emplace_back(Vec3{ 0, 0, 1});
+
+  auto within = [](int a, int val, int b) { return a <= val && val < b; };
+
+  auto are_equals = [](float a, float b) { return std::abs(a - b) < 0.00001f; };
+
+  std::vector<int> to_delete;
+
+  std::cout << position_array.size() << std::endl;
+  for (int actual_vox = 0; actual_vox < position_array.size(); ++actual_vox) {
+    int i0 = position_array.at(actual_vox).x;
+    int j0 = position_array.at(actual_vox).y;
+    int k0 = position_array.at(actual_vox).z;
+    uint res = 0;
+    for (uint indice = 0; indice < neighbors.size(); ++indice) {
+//std::cout << "res:" << res << " ind:" << indice << std::endl;
+      if (res != indice) break;
+      int i = i0 + neighbors.at(indice).x;
+      int j = j0 + neighbors.at(indice).y;
+      int k = k0 + neighbors.at(indice).z;
+      if (!within(0, i, depth) || !within(0, j, line) || !within(0, k, column)) {
+        ++res;
+        continue; // res++;
+      }
+
+      for (uint vox = 0; vox < position_array.size(); ++vox) {
+        // UTILISER FIND() PLUTOT http://www.cplusplus.com/reference/algorithm/find/
+        if (are_equals(position_array.at(vox).x, (float)i)
+          && are_equals(position_array.at(vox).y, (float)j)
+          && are_equals(position_array.at(vox).z, (float)k))
+        {
+          if (are_equals(intensity_array.at(actual_vox), intensity_array.at(vox))) {
+            ++res;
+          }
+          break;
+        }
+      }
+    }
+//std::cout << res << std::endl;
+    if (res == neighbors.size()) {
+//std::cout << "test" << std::endl;
+      to_delete.emplace_back(actual_vox);
+    }
+  }
+
+  for(int i = to_delete.size() - 1; i >= 0; --i) {
+    position_array.erase(position_array.begin() + to_delete.at(i));
+    intensity_array.erase(intensity_array.begin() + to_delete.at(i));
+  }
+  std::cout << position_array.size() << std::endl;*/
 }
 
 /*
