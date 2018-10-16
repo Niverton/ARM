@@ -2,28 +2,26 @@
 #define CANVAS_H
 
 #define GL_GLEXT_PROTOTYPES
-#include "voxel_mesh.h"
-#include <QGLFormat>
-#include <QGLShader>
-#include <QGLShaderProgram>
-#include <QGLWidget>
-#include <QMatrix4x4>
-#include <QMouseEvent>
-#include <cstdlib>
-#include <memory>
 #include "vec.h"
+#include "voxel_mesh.h"
+#include <QMatrix4x4>
+#include <QOpenGLFunctions>
+#include <QOpenGLShader>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLWindow>
+#include <memory>
 
-class Canvas : public QGLWidget {
+class Canvas : public QOpenGLWindow, protected QOpenGLFunctions {
   Q_OBJECT
 public:
-  explicit Canvas(const QGLFormat &gl_format, QWidget *parent = 0);
-  void initializeGL();
-  void resizeGL(int width, int height);
-  void paintGL();
+  explicit Canvas(QOpenGLContext *context);
+  void initializeGL() override;
+  void resizeGL(int width, int height) override;
+  void paintGL() override;
+
+  // TODO
   std::vector<Vec3> vertexArray;
   std::vector<Vec3_base<unsigned short>> faceArray;
-  std::unique_ptr<QGLShaderProgram> program;
-  
   // virtual void keyPressEvent( QKeyEvent *keyEvent );
 
 private:
@@ -32,15 +30,17 @@ private:
   void mouseMoveEvent(QMouseEvent *event);
   void wheelEvent(QWheelEvent *event);
 
+  std::unique_ptr<QOpenGLContext> gl_context;
+  std::unique_ptr<QOpenGLShaderProgram> program;
 
-  unsigned int vertexBuffer, faceBuffer, instanceBuffer, instanceBufferIntensity;
+  unsigned int vertexBuffer, faceBuffer, instanceBuffer,
+      instanceBufferIntensity;
   std::vector<Vec3> positionArray;
   std::vector<float> intensityArray;
-  std::unique_ptr<QGLShader> vertexShader, fragmentShader;
   QMatrix4x4 mView, mProj, mObj;
   VoxelMesh voxelMesh;
   QPoint mouse_prev_pos;
-  QVector3D rotateX{0.0,1.0,0.0}, rotateY{1.0,0.0,0.0};
+  QVector3D rotateX{0.0, 1.0, 0.0}, rotateY{1.0, 0.0, 0.0};
 };
 
 #endif

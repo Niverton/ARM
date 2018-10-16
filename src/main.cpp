@@ -1,20 +1,24 @@
-#include <iostream>
-#include <unistd.h>
-
-#include <QApplication>
-
 #include "canvas.h"
+#include <QApplication>
+#include <cassert>
 
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
-  
-  QGLFormat format{};
-  format.setVersion(3, 1);
-  format.setProfile(QGLFormat::CoreProfile);
-  Canvas *pCanvas = new Canvas(format);
-  pCanvas->show();
 
-  pCanvas->resize(640, 480);
+  // Context
+  QSurfaceFormat format{};
+  format.setRenderableType(QSurfaceFormat::OpenGL);
+  format.setVersion(3, 3);
+  format.setProfile(QSurfaceFormat::CoreProfile);
+  QOpenGLContext gl_context{};
+  gl_context.setFormat(format);
+  gl_context.create();
+
+  assert(gl_context.isValid());
+
+  Canvas pCanvas{&gl_context};
+  pCanvas.show();
+  pCanvas.resize(640, 480);
 
   return app.exec();
 }
