@@ -30,6 +30,8 @@ private:
   void initializeProgram();
   void initializeGeometry();
   void mouseMoveEvent(QMouseEvent *event);
+  void wheelEvent(QWheelEvent *event);
+
 
   unsigned int vertexBuffer, faceBuffer, instanceBuffer, instanceBufferIntensity;
   std::vector<Vec3> positionArray;
@@ -38,6 +40,7 @@ private:
   QMatrix4x4 mView, mProj, mObj;
   VoxelMesh voxelMesh;
   QPoint mouse_prev_pos;
+  QVector3D rotateX{0.0,1.0,0.0}, rotateY{1.0,0.0,0.0};
 };
 
 #endif

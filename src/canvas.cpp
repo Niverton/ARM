@@ -67,8 +67,8 @@ void Canvas::initializeGL() {
   glClearColor(0.0,0.0,0.0,1.0);
 
   glEnable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  //glEnable(GL_BLEND);
+  //glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 
   int nb_vtx_coord = 3;
   glEnableVertexAttribArray(0);
@@ -148,11 +148,21 @@ void Canvas::mouseMoveEvent(QMouseEvent *event){
 
   if(event->buttons() & Qt::LeftButton){
     float angleX = (float)dpos.x();
-    mObj.rotate(angleX, QVector3D(0.0,1.0,0.0));
     float angleY = (float)dpos.y();
-    mObj.rotate(angleY, QVector3D(1.0,0.0,0.0));
+    mObj.rotate(angleX, rotateX);
+    QMatrix4x4 compensate;
+    compensate.rotate(angleX, -rotateX);
+    rotateY = compensate*rotateY;
+    mObj.rotate(angleY, rotateY);
+    compensate.setToIdentity();
+    compensate.rotate(angleY, -rotateY);
+    rotateX = compensate*rotateX;
   }
-
-
   mouse_prev_pos = event->pos();
+}
+
+void Canvas::wheelEvent(QWheelEvent *event)
+{
+    int numDegrees = event->delta() / 8;
+    mView.translate(0.0,0.0,-0.01*numDegrees);
 }
