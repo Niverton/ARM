@@ -31,7 +31,13 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
         }
         if (v != 0) {
           intensity_array.emplace_back((float)v / (float)max_value);
-          position_array.emplace_back(Vec3{k, j, i});
+          Vec3 p = Vec3({-0.5f+(float)k/(float)column, 
+                      -0.5f+(float)j/(float)line, 
+                      -0.5f+(float)i/(float)depth});
+
+          position_array.emplace_back(p);
+
+          //printf("%f,%f,%f\n", p.x, p.y, p.z);
         }
       }
     }
