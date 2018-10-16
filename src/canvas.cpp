@@ -1,5 +1,6 @@
 #include "canvas.h"
 #include <QSurfaceFormat>
+#include <QWheelEvent>
 #include <iostream> // TODO A ENLEVER !
 #include <memory>
 
