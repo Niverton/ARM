@@ -1,7 +1,6 @@
 #version 330 core
 
 out vec4 out_color;
-out float gl_FragDepth;
 
 in vec3 position;
 in vec3 color;
