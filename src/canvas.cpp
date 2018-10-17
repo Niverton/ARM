@@ -1,6 +1,7 @@
 #include "canvas.h"
 #include <QSurfaceFormat>
 #include <QWheelEvent>
+#include <cassert>
 #include <iostream> // TODO A ENLEVER !
 #include <memory>
 
@@ -9,12 +10,12 @@ Canvas::Canvas(QOpenGLContext *context)
       program{std::make_unique<QOpenGLShaderProgram>()} {}
 
 void Canvas::initializeProgram() {
-  program->addShaderFromSourceFile(QOpenGLShader::Vertex,
-                                   "../data/vertex.vert");
-  program->addShaderFromSourceFile(QOpenGLShader::Fragment,
-                                   "../data/fragment.frag");
+  assert(program->addShaderFromSourceFile(QOpenGLShader::Vertex,
+                                          "../data/vertex.vert"));
+  assert(program->addShaderFromSourceFile(QOpenGLShader::Fragment,
+                                          "../data/fragment.frag"));
   // TODO Check for errors
-  program->link();
+  assert(program->link());
 }
 
 void Canvas::initializeGeometry() {
