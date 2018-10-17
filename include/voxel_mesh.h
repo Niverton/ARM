@@ -13,7 +13,6 @@ public:
   virtual ~VoxelMesh() = default;
 
   void loadFromPGM3D(const std::string &file_name);
-  // void drawAsCubes(Canvas &canvas);
   std::vector<float> intensity_array;
   std::vector<Vec3> position_array;
   unsigned short column{1}, line{1}, depth{1};
