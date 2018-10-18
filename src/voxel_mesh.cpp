@@ -115,7 +115,7 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
           short i_n = i + neighbors[neigh].x;
           short j_n = j + neighbors[neigh].y;
           short k_n = k + neighbors[neigh].z;
-          if (val == value_at(matrix_voxel, i_n, j_n, k_n, column, line)) {
+          if (val != value_at(matrix_voxel, i_n, j_n, k_n, column, line)) {
             position_array.emplace_back(Vec3({posI, posJ, posK}));
             intensity_array.emplace_back((float)val / (float)max_value);
           }
