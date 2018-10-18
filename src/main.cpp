@@ -1,8 +1,14 @@
 #include "canvas.h"
 #include <QApplication>
 #include <cassert>
+#include <iostream>
 
 int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    std::cerr << "Usage: " << argv[0] << " <file>\n";
+    return 1;
+  }
+
   QApplication app(argc, argv);
 
   // Context
@@ -16,7 +22,7 @@ int main(int argc, char *argv[]) {
 
   assert(gl_context.isValid());
 
-  Canvas pCanvas{&gl_context};
+  Canvas pCanvas{&gl_context, argv[1]};
   pCanvas.show();
   pCanvas.resize(640, 480);
 

@@ -1,3 +1,4 @@
+#include "OBJ_Loader.h"
 #include "canvas.h"
 #include <QSurfaceFormat>
 #include <QWheelEvent>
@@ -5,20 +6,78 @@
 #include <iostream> // TODO A ENLEVER !
 #include <memory>
 
-Canvas::Canvas(QOpenGLContext *context)
-    : QOpenGLWindow(context), QOpenGLFunctions(context),
-      program{std::make_unique<QOpenGLShaderProgram>()} {}
+Canvas::Canvas(QOpenGLContext *context, std::string file)
+    : QOpenGLWindow(context),
+      QOpenGLFunctions(context), file_name{std::move(file)},
+      program{std::make_unique<QOpenGLShaderProgram>()} {
+  // Find mesh type
+  // 1: extract file name
+  std::size_t fp = file_name.find_last_of('/');
+  if (fp == std::string::npos) {
+    fp = -1;
+  }
+  std::string name = file_name.substr(fp + 1);
+  // 2 file extension
+  fp = name.find_last_of('.');
+  if (fp != std::string::npos) {
+    std::string ext = name.substr(fp + 1);
+    if (ext == "obj") {
+      is_voxel = false;
+      return;
+    } else if (ext == "pgm3d") {
+      is_voxel = true;
+      return;
+    }
+  } // Else error
+  std::cerr << file_name << " is neither a .obj nor a .pgm3d file.\n";
+  std::exit(1);
+}
 
 void Canvas::initializeProgram() {
-  assert(program->addShaderFromSourceFile(QOpenGLShader::Vertex,
-                                          "../data/vertex.vert"));
-  assert(program->addShaderFromSourceFile(QOpenGLShader::Fragment,
-                                          "../data/fragment.frag"));
-  // TODO Check for errors
+  const char *vertex_file{nullptr}, *fragment_file{nullptr};
+  if (is_voxel) {
+    vertex_file = "../data/vertex.vert";
+    fragment_file = "../data/fragment.frag";
+  } else {
+    vertex_file = "../data/mesh.vert";
+    fragment_file = "../data/mesh.frag";
+  }
+
+  assert(program->addShaderFromSourceFile(QOpenGLShader::Vertex, vertex_file));
+  assert(
+      program->addShaderFromSourceFile(QOpenGLShader::Fragment, fragment_file));
   assert(program->link());
 }
 
-void Canvas::initializeGeometry() {
+void Canvas::initializeMeshGeometry() {
+  using namespace objl;
+  Loader obj_loader{};
+  if (!obj_loader.LoadFile(file_name)) {
+    std::cerr << "Could not load file " << file_name << " as obj\n";
+    std::exit(1);
+  }
+  std::cout << "Found " << obj_loader.LoadedMeshes.size() << " meshes.\n";
+  Mesh &mesh = obj_loader.LoadedMeshes[0];
+  std::cout << "Loaded mesh " << mesh.MeshName << ".\n";
+
+  vertexArray.reserve(mesh.Vertices.size());
+  faceArray.reserve(mesh.Indices.size() / 3);
+
+  auto convert = [](const objl::Vector3 &v) -> Vec3 { return {v.X, v.Y, v.Z}; };
+  for (const auto &vertex : mesh.Vertices) {
+    vertexArray.emplace_back(convert(vertex.Position));
+  }
+
+  std::vector<unsigned int> &faces = mesh.Indices;
+  for (unsigned int i = 0; i < faces.size(); i += 3) {
+    faceArray.push_back({faces[i], faces[i + 1], faces[i + 2]});
+  }
+
+  std::cout << vertexArray.size() << " vertices\n";
+  std::cout << faceArray.size() << " faces\n";
+}
+
+void Canvas::initializeVoxelGeometry() {
   vertexArray.push_back({-0.5f, 0.5f, -0.5f});
   vertexArray.push_back({0.5f, 0.5f, -0.5f});
   vertexArray.push_back({0.5f, -0.5f, -0.5f});
@@ -47,7 +106,7 @@ void Canvas::initializeGeometry() {
   faceArray.push_back({0, 1, 4});
   faceArray.push_back({1, 4, 5});
 
-  voxelMesh.loadFromPGM3D("../data/shepp_logan.pgm3d");
+  voxelMesh.loadFromPGM3D(file_name);
   positionArray = voxelMesh.position_array;
   intensityArray = voxelMesh.intensity_array;
 }
@@ -63,7 +122,12 @@ void Canvas::initializeGL() {
             << std::endl;
 
   initializeProgram();
-  initializeGeometry();
+  if (is_voxel) {
+    initializeVoxelGeometry();
+  } else {
+    initializeMeshGeometry();
+  }
+
   glClearColor(0.0, 0.0, 0.0, 1.0);
 
   //glEnable(GL_DEPTH_TEST);
@@ -81,28 +145,30 @@ void Canvas::initializeGL() {
   glGenBuffers(1, &faceBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceBuffer);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-               sizeof(Vec3_base<short>) * faceArray.size(), faceArray.data(),
-               GL_STATIC_DRAW);
+               sizeof(Vec3_base<unsigned int>) * faceArray.size(),
+               faceArray.data(), GL_STATIC_DRAW);
 
-  glEnableVertexAttribArray(1);
-  int nb_params = 3;
-  glGenBuffers(1, &instanceBuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(Vec3) * positionArray.size(),
-               positionArray.data(), GL_STATIC_DRAW);
-  glVertexAttribPointer(1, nb_params, GL_FLOAT, GL_FALSE, sizeof(Vec3),
-                        nullptr);
-  glVertexAttribDivisor(1, 1);
+  if (is_voxel) {
+    glEnableVertexAttribArray(1);
+    int nb_params = 3;
+    glGenBuffers(1, &instanceBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vec3) * positionArray.size(),
+                 positionArray.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(1, nb_params, GL_FLOAT, GL_FALSE, sizeof(Vec3),
+                          nullptr);
+    glVertexAttribDivisor(1, 1);
 
-  glEnableVertexAttribArray(2);
-  int nb_params_itensity = 1;
-  glGenBuffers(1, &instanceBufferIntensity);
-  glBindBuffer(GL_ARRAY_BUFFER, instanceBufferIntensity);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * intensityArray.size(),
-               intensityArray.data(), GL_STATIC_DRAW);
-  glVertexAttribPointer(2, nb_params_itensity, GL_FLOAT, GL_FALSE,
-                        sizeof(float), nullptr);
-  glVertexAttribDivisor(2, 1);
+    glEnableVertexAttribArray(2);
+    int nb_params_itensity = 1;
+    glGenBuffers(1, &instanceBufferIntensity);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceBufferIntensity);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * intensityArray.size(),
+                 intensityArray.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, nb_params_itensity, GL_FLOAT, GL_FALSE,
+                          sizeof(float), nullptr);
+    glVertexAttribDivisor(2, 1);
+  }
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -123,24 +189,33 @@ void Canvas::paintGL() {
 
   glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
+  if (is_voxel) {
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+  }
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceBuffer);
 
   program->setUniformValue("viewMatrix", mView);
   program->setUniformValue("objectMatrix", mObj);
   program->setUniformValue("projectionMatrix", mProj);
-  program->setUniformValue("meshBounds", (float)voxelMesh.column,
-                           (float)voxelMesh.line, (float)voxelMesh.depth);
-  int nb_instance = positionArray.size();
+  if (is_voxel) {
+    program->setUniformValue("meshBounds", (float)voxelMesh.column,
+                             (float)voxelMesh.line, (float)voxelMesh.depth);
+    int nb_instance = positionArray.size();
 
-  glDrawElementsInstanced(GL_TRIANGLES, faceArray.size() * 3, GL_UNSIGNED_SHORT,
-                          nullptr, nb_instance);
+    glDrawElementsInstanced(GL_TRIANGLES, faceArray.size() * 3,
+                            GL_UNSIGNED_SHORT, nullptr, nb_instance);
+  } else {
+    glDrawElements(GL_TRIANGLES, faceArray.size() * 3, GL_UNSIGNED_SHORT,
+                   nullptr);
+  }
 
   glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
-  glDisableVertexAttribArray(2);
+  if (is_voxel) {
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+  }
 
   update();
 }
