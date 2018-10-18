@@ -24,7 +24,8 @@ Canvas::Canvas(QOpenGLContext *context, std::string file)
     if (ext == "obj") {
       is_voxel = false;
       return;
-    } else if (ext == "pgm3d") {
+    }
+    if (ext == "pgm3d") {
       is_voxel = true;
       return;
     }
@@ -50,6 +51,7 @@ void Canvas::initializeProgram() {
 }
 
 void Canvas::initializeMeshGeometry() {
+
   using namespace objl;
   Loader obj_loader{};
   if (!obj_loader.LoadFile(file_name)) {
@@ -122,6 +124,7 @@ void Canvas::initializeGL() {
             << std::endl;
 
   initializeProgram();
+
   if (is_voxel) {
     initializeVoxelGeometry();
   } else {
@@ -130,7 +133,7 @@ void Canvas::initializeGL() {
 
   glClearColor(0.0, 0.0, 0.0, 1.0);
 
-  //glEnable(GL_DEPTH_TEST);
+  // glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
 
@@ -207,7 +210,7 @@ void Canvas::paintGL() {
     glDrawElementsInstanced(GL_TRIANGLES, faceArray.size() * 3,
                             GL_UNSIGNED_SHORT, nullptr, nb_instance);
   } else {
-    glDrawElements(GL_TRIANGLES, faceArray.size() * 3, GL_UNSIGNED_SHORT,
+    glDrawElements(GL_TRIANGLES, faceArray.size() * 3, GL_UNSIGNED_INT,
                    nullptr);
   }
 
@@ -216,6 +219,13 @@ void Canvas::paintGL() {
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
   }
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    std::cerr << "GL Error (" << error << ") !\n";
+  }
+
+  program->release();
 
   update();
 }
