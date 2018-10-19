@@ -1,13 +1,13 @@
 #include "voxel_mesh.h"
+#include <array>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <cmath>
-#include <array>
 
 void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
-  //using uint = unsigned int;
-  //using ushort = unsigned short;
+  // using uint = unsigned int;
+  // using ushort = unsigned short;
   std::fstream f{file_name, std::ios::in};
   if (!f.is_open()) {
     std::cerr << "File " << file_name << " not found !\n";
@@ -23,12 +23,11 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
   f >> max_value;
 
   unsigned int size = column * line * depth;
-  
-  short *matrix_voxel = (short*)malloc(size * sizeof(short));
-  auto value_at = [](short* vec, short x, short y, short z,
-                    short col, short lin)
-                      { return vec[x + col * (y + lin * z)]; };
-  
+
+  short *matrix_voxel = (short *)malloc(size * sizeof(short));
+  auto value_at = [](short *vec, short x, short y, short z, short col,
+                     short lin) { return vec[x + col * (y + lin * z)]; };
+
   for (short k = 0; k < depth; ++k) {
     for (short j = 0; j < line; ++j) {
       for (short i = 0; i < column; ++i) {
@@ -38,17 +37,20 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
           std::cerr << "Error reading file (" << file_name << ")\n";
           std::exit(1);
         }
-        matrix_voxel[i + column*(j+line*k)] = v;
+        if (v > max_value) {
+          std::cerr << "Error in file " << file_name << ". Value " << v
+                    << " is supperior to max value " << max_value << ".\n";
+          std::exit(1);
+        }
+        matrix_voxel[i + column * (j + line * k)] = v;
       }
     }
   }
 
-  std::array<Vec3_base<short>, 6> neighbors{Vec3_base<short>{-1, 0, 0},
-                                            Vec3_base<short>{ 1, 0, 0},
-                                            Vec3_base<short>{ 0,-1, 0},
-                                            Vec3_base<short>{ 0, 1, 0},
-                                            Vec3_base<short>{ 0, 0,-1},
-                                            Vec3_base<short>{ 0, 0, 1}};
+  std::array<Vec3_base<short>, 6> neighbors{
+      Vec3_base<short>{-1, 0, 0}, Vec3_base<short>{1, 0, 0},
+      Vec3_base<short>{0, -1, 0}, Vec3_base<short>{0, 1, 0},
+      Vec3_base<short>{0, 0, -1}, Vec3_base<short>{0, 0, 1}};
 
   // The borders of the matrix
   for (short i = 0; i < column; ++i) {
@@ -58,10 +60,10 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
 
       short val = value_at(matrix_voxel, i, j, 0, column, line);
       if (val != 0) {
-        position_array.emplace_back(Vec3({posI, posJ,-0.5f}));
+        position_array.emplace_back(Vec3({posI, posJ, -0.5f}));
         intensity_array.emplace_back((float)val / (float)max_value);
       }
-      val = value_at(matrix_voxel, i, j, depth-1, column, line);
+      val = value_at(matrix_voxel, i, j, depth - 1, column, line);
       if (val != 0) {
         position_array.emplace_back(Vec3({posI, posJ, 0.5f}));
         intensity_array.emplace_back((float)val / (float)max_value);
@@ -72,10 +74,10 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
 
       short val = value_at(matrix_voxel, i, 0, k, column, line);
       if (val != 0) {
-        position_array.emplace_back(Vec3({posI,-0.5f, posK}));
+        position_array.emplace_back(Vec3({posI, -0.5f, posK}));
         intensity_array.emplace_back((float)val / (float)max_value);
       }
-      val = value_at(matrix_voxel, i, line-1, k, column, line);
+      val = value_at(matrix_voxel, i, line - 1, k, column, line);
       if (val != 0) {
         position_array.emplace_back(Vec3({posI, 0.5f, posK}));
         intensity_array.emplace_back((float)val / (float)max_value);
@@ -92,9 +94,9 @@ void VoxelMesh::loadFromPGM3D(const std::string &file_name) {
         position_array.emplace_back(Vec3({-0.5f, posJ, posK}));
         intensity_array.emplace_back((float)val / (float)max_value);
       }
-      val = value_at(matrix_voxel, column-1, j, k, column, line);
+      val = value_at(matrix_voxel, column - 1, j, k, column, line);
       if (val != 0) {
-        position_array.emplace_back(Vec3({ 0.5f, posJ, posK}));
+        position_array.emplace_back(Vec3({0.5f, posJ, posK}));
         intensity_array.emplace_back((float)val / (float)max_value);
       }
     }
