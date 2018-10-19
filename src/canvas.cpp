@@ -51,7 +51,6 @@ void Canvas::initializeProgram() {
 }
 
 void Canvas::initializeMeshGeometry() {
-
   using namespace objl;
   Loader obj_loader{};
   if (!obj_loader.LoadFile(file_name)) {

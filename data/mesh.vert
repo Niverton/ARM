@@ -10,9 +10,6 @@ out vec3 color;
 
 void main(void) {
   mat4 MVP = projectionMatrix*viewMatrix*objectMatrix;
-  /*
-  position = (vtx_position/meshBounds + instance_pos.xyz);
-  */
   color = vec3(1,1,1);
-  gl_Position = MVP * vec4(position,1.0);
+  gl_Position = MVP * vec4(vtx_position,1.0);
 }
