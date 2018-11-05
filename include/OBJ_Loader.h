@@ -17,8 +17,21 @@
 // Math.h - STD math Library
 #include <math.h>
 
+#include <sstream>
+
 // Print progress to console while loading (large models)
 #define OBJL_CONSOLE_OUTPUT
+
+/*
+ * An issue with std::stof cause near-zero negative value to be returned as zero
+*/
+namespace my {
+float stof(std::string str){
+	float val;
+	std::stringstream(str) >> val;
+	return val;
+}
+}
 
 // Namespace: OBJL
 //
@@ -542,9 +555,9 @@ namespace objl
 					Vector3 vpos;
 					algorithm::split(algorithm::tail(curline), spos, " ");
 
-					vpos.X = std::stof(spos[0]);
-					vpos.Y = std::stof(spos[1]);
-					vpos.Z = std::stof(spos[2]);
+					vpos.X = my::stof(spos[0]);
+					vpos.Y = my::stof(spos[1]);
+					vpos.Z = my::stof(spos[2]);
 
 					Positions.push_back(vpos);
 				}
@@ -555,8 +568,8 @@ namespace objl
 					Vector2 vtex;
 					algorithm::split(algorithm::tail(curline), stex, " ");
 
-					vtex.X = std::stof(stex[0]);
-					vtex.Y = std::stof(stex[1]);
+					vtex.X = my::stof(stex[0]);
+					vtex.Y = my::stof(stex[1]);
 
 					TCoords.push_back(vtex);
 				}
@@ -567,9 +580,9 @@ namespace objl
 					Vector3 vnor;
 					algorithm::split(algorithm::tail(curline), snor, " ");
 
-					vnor.X = std::stof(snor[0]);
-					vnor.Y = std::stof(snor[1]);
-					vnor.Z = std::stof(snor[2]);
+					vnor.X = my::stof(snor[0]);
+					vnor.Y = my::stof(snor[1]);
+					vnor.Z = my::stof(snor[2]);
 
 					Normals.push_back(vnor);
 				}
@@ -1068,9 +1081,9 @@ namespace objl
 					if (temp.size() != 3)
 						continue;
 
-					tempMaterial.Ka.X = std::stof(temp[0]);
-					tempMaterial.Ka.Y = std::stof(temp[1]);
-					tempMaterial.Ka.Z = std::stof(temp[2]);
+					tempMaterial.Ka.X = my::stof(temp[0]);
+					tempMaterial.Ka.Y = my::stof(temp[1]);
+					tempMaterial.Ka.Z = my::stof(temp[2]);
 				}
 				// Diffuse Color
 				if (algorithm::firstToken(curline) == "Kd")
@@ -1081,9 +1094,9 @@ namespace objl
 					if (temp.size() != 3)
 						continue;
 
-					tempMaterial.Kd.X = std::stof(temp[0]);
-					tempMaterial.Kd.Y = std::stof(temp[1]);
-					tempMaterial.Kd.Z = std::stof(temp[2]);
+					tempMaterial.Kd.X = my::stof(temp[0]);
+					tempMaterial.Kd.Y = my::stof(temp[1]);
+					tempMaterial.Kd.Z = my::stof(temp[2]);
 				}
 				// Specular Color
 				if (algorithm::firstToken(curline) == "Ks")
@@ -1094,24 +1107,24 @@ namespace objl
 					if (temp.size() != 3)
 						continue;
 
-					tempMaterial.Ks.X = std::stof(temp[0]);
-					tempMaterial.Ks.Y = std::stof(temp[1]);
-					tempMaterial.Ks.Z = std::stof(temp[2]);
+					tempMaterial.Ks.X = my::stof(temp[0]);
+					tempMaterial.Ks.Y = my::stof(temp[1]);
+					tempMaterial.Ks.Z = my::stof(temp[2]);
 				}
 				// Specular Exponent
 				if (algorithm::firstToken(curline) == "Ns")
 				{
-					tempMaterial.Ns = std::stof(algorithm::tail(curline));
+					tempMaterial.Ns = my::stof(algorithm::tail(curline));
 				}
 				// Optical Density
 				if (algorithm::firstToken(curline) == "Ni")
 				{
-					tempMaterial.Ni = std::stof(algorithm::tail(curline));
+					tempMaterial.Ni = my::stof(algorithm::tail(curline));
 				}
 				// Dissolve
 				if (algorithm::firstToken(curline) == "d")
 				{
-					tempMaterial.d = std::stof(algorithm::tail(curline));
+					tempMaterial.d = my::stof(algorithm::tail(curline));
 				}
 				// Illumination
 				if (algorithm::firstToken(curline) == "illum")
